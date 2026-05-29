@@ -42,6 +42,41 @@ class GalleryController extends Controller
         }
     }
 
+    public function store(Request $request): JsonResponse
+    {
+        try {
+            $validated = $request->validate([
+                'title' => 'nullable|array',
+                'file_path' => 'required|string',
+                'file_type' => 'required|string|in:image,video',
+                'categories' => 'nullable|array',
+            ]);
+            $item = GalleryItem::create($validated);
+            return response()->json(new MediaResource($item), 201);
+        } catch (\Throwable $e) {
+            Log::error('GalleryController@store: ' . $e->getMessage());
+            return response()->json(['message' => 'Erreur lors de l\'ajout du media.'], 500);
+        }
+    }
+
+    public function update(Request $request, string $id): JsonResponse
+    {
+        try {
+            $item = GalleryItem::findOrFail($id);
+            $validated = $request->validate([
+                'title' => 'nullable|array',
+                'file_path' => 'nullable|string',
+                'file_type' => 'nullable|string|in:image,video',
+                'categories' => 'nullable|array',
+            ]);
+            $item->update($validated);
+            return response()->json(new MediaResource($item));
+        } catch (\Throwable $e) {
+            Log::error('GalleryController@update: ' . $e->getMessage());
+            return response()->json(['message' => 'Erreur lors de la mise a jour du media.'], 500);
+        }
+    }
+
     public function destroy(string $id): JsonResponse
     {
         try {

@@ -18,14 +18,18 @@ class MediaController extends Controller
             $file = $request->file('file');
             $path = $file->store('media', 'public');
 
-            $item = GalleryItem::create([
+            $data = [
                 'file_path' => Storage::url($path),
                 'file_type' => $file->getMimeType(),
                 'file_size' => $file->getSize(),
                 'mime_type' => $file->getMimeType(),
                 'title' => $request->input('title', ['fr' => $file->getClientOriginalName()]),
                 'uploaded_by' => auth()->id(),
-            ]);
+            ];
+            if ($request->has('categories')) {
+                $data['categories'] = $request->input('categories');
+            }
+            $item = GalleryItem::create($data);
 
             return response()->json(new MediaResource($item), 201);
         } catch (\Throwable $e) {

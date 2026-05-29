@@ -16,6 +16,7 @@ class UploadMediaRequest extends FormRequest
         return [
             'file' => 'required|file|mimes:jpeg,png,jpg,gif,svg,mp4,mov,avi,pdf,doc,docx|max:102400',
             'title' => 'sometimes|array',
+            'categories' => 'nullable|array',
         ];
     }
 

@@ -17,13 +17,19 @@ class AuthController extends Controller
         try {
             $credentials = $request->only('email', 'password');
 
+            $user = User::where('email', $credentials['email'])->first();
+            if (!$user) {
+                return response()->json(['message' => 'Identifiants invalides.'], 401);
+            }
+            if (!$user->is_active) {
+                return response()->json(['message' => 'Compte desactive. Contactez l\'administrateur.'], 403);
+            }
+
             if (! $token = JWTAuth::attempt($credentials)) {
                 return response()->json([
                     'message' => 'Identifiants invalides.',
                 ], 401);
             }
-
-            $user = auth()->user();
 
             return response()->json([
                 'token' => $token,

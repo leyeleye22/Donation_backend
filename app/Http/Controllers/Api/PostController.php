@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Events\PostPublished;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StorePostRequest;
 use App\Http\Requests\UpdatePostRequest;
@@ -69,6 +70,9 @@ class PostController extends Controller
     {
         try {
             $post = Post::create($request->validated());
+            if ($post->is_published) {
+                PostPublished::dispatch($post);
+            }
             return response()->json(new PostResource($post), 201);
         } catch (\Throwable $e) {
             Log::error('PostController@store: ' . $e->getMessage());
@@ -80,8 +84,13 @@ class PostController extends Controller
     {
         try {
             $post = Post::findOrFail($id);
+            $wasPublished = $post->is_published;
             $post->update($request->validated());
-            return response()->json(new PostResource($post->fresh()));
+            $post = $post->fresh();
+            if ($post->is_published && !$wasPublished) {
+                PostPublished::dispatch($post);
+            }
+            return response()->json(new PostResource($post));
         } catch (\Throwable $e) {
             Log::error('PostController@update: ' . $e->getMessage());
             return response()->json(['message' => 'Erreur lors de la mise a jour de l\'article.'], 500);
