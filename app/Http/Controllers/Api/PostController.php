@@ -22,7 +22,17 @@ class PostController extends Controller
             if ($request->category) {
                 $query->where('category', $request->category);
             }
-            if ($request->published) {
+
+            $isAuthenticated = (bool) $request->user();
+            if ($request->has('published')) {
+                if ($request->boolean('published')) {
+                    $query->where('is_published', true);
+                } elseif ($isAuthenticated && ($request->input('published') === '0' || $request->input('published') === 'false')) {
+                    $query->where('is_published', false);
+                } else {
+                    $query->where('is_published', true);
+                }
+            } elseif (!$isAuthenticated) {
                 $query->where('is_published', true);
             }
 
@@ -44,10 +54,13 @@ class PostController extends Controller
         }
     }
 
-    public function show(string $id): JsonResponse
+    public function show(Request $request, string $id): JsonResponse
     {
         try {
             $post = Post::findOrFail($id);
+            if (!$request->user() && !$post->is_published) {
+                return response()->json(['message' => 'Article introuvable.'], 404);
+            }
             return response()->json(new PostResource($post));
         } catch (\Throwable $e) {
             Log::error('PostController@show: ' . $e->getMessage());
@@ -55,10 +68,13 @@ class PostController extends Controller
         }
     }
 
-    public function showBySlug(string $slug): JsonResponse
+    public function showBySlug(Request $request, string $slug): JsonResponse
     {
         try {
             $post = Post::where('slug', $slug)->firstOrFail();
+            if (!$request->user() && !$post->is_published) {
+                return response()->json(['message' => 'Article introuvable.'], 404);
+            }
             return response()->json(new PostResource($post));
         } catch (\Throwable $e) {
             Log::error('PostController@showBySlug: ' . $e->getMessage());

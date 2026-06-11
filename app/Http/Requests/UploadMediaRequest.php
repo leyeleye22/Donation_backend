@@ -14,7 +14,7 @@ class UploadMediaRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'file' => 'required|file|mimes:jpeg,png,jpg,gif,svg,mp4,mov,avi,pdf,doc,docx|max:102400',
+            'file' => 'required|file|mimes:jpeg,png,jpg,gif,webp,mp4,mov,avi,pdf,doc,docx|max:102400',
             'title' => 'sometimes|array',
             'categories' => 'nullable|array',
         ];
@@ -25,7 +25,7 @@ class UploadMediaRequest extends FormRequest
         return [
             'file.required' => 'Le fichier est requis.',
             'file.file' => 'Veuillez fournir un fichier valide.',
-            'file.mimes' => 'Le fichier doit être de type : jpeg, png, jpg, gif, svg, mp4, mov, avi, pdf, doc, docx.',
+            'file.mimes' => 'Le fichier doit être de type : jpeg, png, jpg, gif, webp, mp4, mov, avi, pdf, doc, docx.',
             'file.max' => 'Le fichier ne doit pas dépasser 100 Mo.',
             'title.array' => 'Le titre doit être un tableau.',
         ];

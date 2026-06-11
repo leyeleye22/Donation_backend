@@ -54,6 +54,17 @@ class ProjectController extends Controller
         }
     }
 
+    public function showBySlug(string $slug): JsonResponse
+    {
+        try {
+            $project = Project::where('slug', $slug)->firstOrFail();
+            return response()->json(new ProjectResource($project));
+        } catch (\Throwable $e) {
+            Log::error('ProjectController@showBySlug: ' . $e->getMessage());
+            return response()->json(['message' => 'Projet introuvable.'], 404);
+        }
+    }
+
     public function store(StoreProjectRequest $request): JsonResponse
     {
         try {

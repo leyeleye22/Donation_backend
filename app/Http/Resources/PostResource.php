@@ -9,7 +9,7 @@ class PostResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
-        return [
+        $data = [
             'id' => $this->id,
             'slug' => $this->slug,
             'title' => $this->title,
@@ -19,10 +19,15 @@ class PostResource extends JsonResource
             'category' => $this->category,
             'location' => $this->location,
             'read_time' => $this->read_time,
-            'is_published' => $this->is_published,
             'published_at' => $this->published_at,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];
+
+        if ($request->user()) {
+            $data['is_published'] = $this->is_published;
+        }
+
+        return $data;
     }
 }

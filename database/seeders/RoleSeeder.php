@@ -20,7 +20,8 @@ class RoleSeeder extends Seeder
             'guard_name' => 'api',
             'permissions' => [
                 'projects.*', 'posts.*', 'pages.*',
-                'gallery.*', 'media.upload',
+                'gallery.*', 'media.upload', 'dashboard.read',
+                'categories.*', 'navigation.read',
             ],
         ]);
 

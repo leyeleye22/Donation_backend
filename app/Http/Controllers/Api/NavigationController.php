@@ -12,10 +12,14 @@ use Illuminate\Support\Facades\Log;
 
 class NavigationController extends Controller
 {
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
         try {
-            $items = NavItem::where('is_active', true)->orderBy('sort_order')->get();
+            $query = NavItem::query();
+            if (!$request->user() || !$request->boolean('all')) {
+                $query->where('is_active', true);
+            }
+            $items = $query->orderBy('sort_order')->get();
             return response()->json(NavItemResource::collection($items));
         } catch (\Throwable $e) {
             Log::error('NavigationController@index: ' . $e->getMessage());

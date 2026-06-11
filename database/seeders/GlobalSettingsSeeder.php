@@ -15,7 +15,7 @@ class GlobalSettingsSeeder extends Seeder
             'show_floating_button' => true,
             'floating_button_pages' => ['/', '/about', '/projects', '/journal', '/gallery', '/contact'],
             'footer_copyright' => "Entraide Pour Servir L Humanite. Tous droits reserves.",
-            'footer_intro' => "Une association qui documente ses actions pour plus de transparence et d impact.",
+            'footer_intro' => "Association humanitaire au Senegal et au Niger.",
             'page_settings' => [
                 '/' => ['heroEyebrow' => "Entraide pour servir l'humanite", 'heroTitle' => 'Ensemble pour un impact concret', 'heroDescription' => 'Documenter, informer, mobiliser.', 'heroPrimaryCta' => 'Faire un don', 'heroSecondaryCta' => 'Nos projets'],
                 '/about' => ['heroEyebrow' => "Entraide pour servir l'humanite", 'heroTitle' => 'Ensemble pour un impact concret', 'heroDescription' => 'Documenter, informer, mobiliser.', 'heroPrimaryCta' => 'Faire un don', 'heroSecondaryCta' => 'Nos projets'],

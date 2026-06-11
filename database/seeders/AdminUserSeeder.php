@@ -11,7 +11,14 @@ class AdminUserSeeder extends Seeder
     public function run(): void
     {
         $adminRole = \App\Models\Role::where('name', 'admin')->first();
-        $password = env('ADMIN_PASSWORD', 'Admin2026!');
+        $password = env('ADMIN_PASSWORD');
+        if (!$password) {
+            if (app()->environment('production')) {
+                throw new \RuntimeException('ADMIN_PASSWORD must be set before seeding in production.');
+            }
+            $password = 'Admin2026!';
+            Log::warning('AdminUserSeeder: using default dev password. Set ADMIN_PASSWORD in production.');
+        }
         $email = env('ADMIN_EMAIL', 'admin@entraide-humanitaire.org');
 
         if (User::where('email', $email)->exists()) {

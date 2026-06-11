@@ -14,7 +14,7 @@
 </td></tr>
 <tr><td style="background:#f8f5ef;padding:20px 40px;text-align:center;font-size:12px;color:#999;">
 Vous recevez cet email car vous etes abonne a notre newsletter.<br>
-<a href="{{ env('FRONTEND_URL', 'http://localhost:3000') }}/newsletter/unsubscribe?email=PLACEHOLDER" style="color:#d97706;">Se desabonner</a>
+<a href="{{ config('services.frontend.url') }}/newsletter/unsubscribe?email=PLACEHOLDER" style="color:#d97706;">Se desabonner</a>
 </td></tr>
 </table>
 </td></tr></table>

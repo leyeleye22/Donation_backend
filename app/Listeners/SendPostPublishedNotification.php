@@ -17,7 +17,7 @@ class SendPostPublishedNotification
             if ($subscribers->isEmpty()) return;
 
             $post = $event->post;
-            $frontendUrl = env('FRONTEND_URL', 'http://localhost:3000');
+            $frontendUrl = config('services.frontend.url');
 
             foreach ($subscribers as $subscriber) {
                 try {

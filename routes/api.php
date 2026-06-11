@@ -17,28 +17,29 @@ use Illuminate\Support\Facades\Route;
 
 // Routes publiques (aucune authentification requise)
 Route::get('/projects', [ProjectController::class, 'index']);
+Route::get('/projects/slug/{slug}', [ProjectController::class, 'showBySlug']);
 Route::get('/projects/{id}', [ProjectController::class, 'show']);
-Route::get('/posts', [PostController::class, 'index']);
-Route::get('/posts/{id}', [PostController::class, 'show']);
-Route::get('/posts/slug/{slug}', [PostController::class, 'showBySlug']);
+Route::get('/posts', [PostController::class, 'index'])->middleware('jwt.optional');
+Route::get('/posts/slug/{slug}', [PostController::class, 'showBySlug'])->middleware('jwt.optional');
+Route::get('/posts/{id}', [PostController::class, 'show'])->middleware('jwt.optional');
 Route::get('/gallery', [GalleryController::class, 'index']);
 Route::get('/gallery/{id}', [GalleryController::class, 'show']);
 Route::get('/navigation', [NavigationController::class, 'index']);
 Route::get('/pages/{slug}', [PageContentController::class, 'show']);
 Route::get('/settings', [GlobalSettingsController::class, 'show']);
 Route::get('/settings/visibility', [GlobalSettingsController::class, 'visibility']);
-Route::post('/contact', [ContactMessageController::class, 'store']);
+Route::post('/contact', [ContactMessageController::class, 'store'])->middleware('throttle:20,60');
 
 // Newsletter public
-Route::post('/newsletter/subscribe', [NewsletterController::class, 'subscribe']);
-Route::post('/newsletter/unsubscribe', [NewsletterController::class, 'unsubscribe']);
+Route::post('/newsletter/subscribe', [NewsletterController::class, 'subscribe'])->middleware('throttle:20,60');
+Route::post('/newsletter/unsubscribe', [NewsletterController::class, 'unsubscribe'])->middleware('throttle:20,60');
 
 // Auth publique
 Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:10,60');
-Route::post('/refresh', [AuthController::class, 'refresh']);
+Route::post('/refresh', [AuthController::class, 'refresh'])->middleware('throttle:30,60');
 
 // Routes protegees (authentification requise)
-Route::middleware('auth:api')->group(function () {
+Route::middleware(['auth:api', \App\Http\Middleware\CheckApiPermission::class])->group(function () {
     Route::get('/me', [AuthController::class, 'me']);
     Route::post('/logout', [AuthController::class, 'logout']);
 
@@ -86,4 +87,8 @@ Route::middleware('auth:api')->group(function () {
     // Newsletter subscribers
     Route::get('/newsletter/subscribers', [NewsletterController::class, 'index']);
     Route::delete('/newsletter/subscribers/{id}', [NewsletterController::class, 'destroy']);
+
+    Route::get('/contact-messages', [ContactMessageController::class, 'index']);
+    Route::put('/contact-messages/{id}/read', [ContactMessageController::class, 'markAsRead']);
+    Route::delete('/contact-messages/{id}', [ContactMessageController::class, 'destroy']);
 });
